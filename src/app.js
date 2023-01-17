@@ -4,37 +4,40 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 const sections = gsap.utils.toArray(".section");
-
-const firstDigit = document.querySelector(".first-digit");
-const secondDigit = document.querySelector(".second-digit");
-const thirdDigit = document.querySelector(".third-digit");
-const fourthDigit = document.querySelector(".fourth-digit");
-
-let firstDigits = [];
-let secondDigits = [];
-let thirdDigits = [];
-let fourthDigits = [];
-
-let uniqueFirstDigits = [];
-let uniqueSecondDigits = [];
-let uniqueThirdDigits = [];
-let uniqueFourthDigits = [];
+const digitsContainers = [
+  {
+    container: document.querySelector(".first-digit"),
+    digits: [],
+  },
+  {
+    container: document.querySelector(".second-digit"),
+    digits: [],
+  },
+  {
+    container: document.querySelector(".third-digit"),
+    digits: [],
+  },
+  {
+    container: document.querySelector(".fourth-digit"),
+    digits: [],
+  },
+];
 
 const getEachDigit = (year) => {
+  const yearString = year.toString();
   return {
-    first: year.toString().charAt(0),
-    second: year.toString().charAt(1),
-    third: year.toString().charAt(2),
-    fourth: year.toString().charAt(3),
+    first: yearString[0],
+    second: yearString[1],
+    third: yearString[2],
+    fourth: yearString[3],
   };
 };
 
 const pushDigits = (year) => {
   let slicedDigits = getEachDigit(year.dataset.year);
-  firstDigits.push(slicedDigits.first);
-  secondDigits.push(slicedDigits.second);
-  thirdDigits.push(slicedDigits.third);
-  fourthDigits.push(slicedDigits.fourth);
+  digitsContainers.forEach(({ digits }, i) =>
+    digits.push(slicedDigits[["first", "second", "third", "fourth"][i]])
+  );
 };
 
 const pushDigitsForEachSection = () => sections.map((year) => pushDigits(year));
@@ -50,15 +53,9 @@ const appendUniqueDigits = (digits, container) => {
 };
 
 const updateUniqueDigits = () => {
-  uniqueFirstDigits = getUniqueDigits(firstDigits);
-  uniqueSecondDigits = getUniqueDigits(secondDigits);
-  uniqueThirdDigits = getUniqueDigits(thirdDigits);
-  uniqueFourthDigits = getUniqueDigits(fourthDigits);
-
-  appendUniqueDigits(uniqueFirstDigits, firstDigit);
-  appendUniqueDigits(uniqueSecondDigits, secondDigit);
-  appendUniqueDigits(uniqueThirdDigits, thirdDigit);
-  appendUniqueDigits(uniqueFourthDigits, fourthDigit);
+  digitsContainers.forEach(({ digits, container }) =>
+    appendUniqueDigits(getUniqueDigits(digits), container)
+  );
 };
 
 const scrollTriggerConfig = (currentSection) => {
@@ -67,7 +64,6 @@ const scrollTriggerConfig = (currentSection) => {
     start: "top bottom",
     end: "50% bottom",
     scrub: true,
-    markers: true
   };
 };
 
@@ -80,107 +76,32 @@ const parallaxConfig = (currentSection) => {
   };
 };
 
-// const imagesParallax = (currentSection) => {
-//   let images = gsap.utils.toArray(".image");
-//   images.map((image) => {
-//     gsap.to(image, {
-//       y: function() {return (1 - parseFloat(el.getAttribute("data-speed"))) * (ScrollTrigger.maxScroll(window) - (this.scrollTrigger ? this.scrollTrigger.start : 0))},
-//       scrollTrigger: parallaxConfig(currentSection),
-//     });
-//   });
-// };
-
-// apply parallax effect to any element with a data-speed attribute
-// gsap.utils.toArray("[data-speed]").forEach(el => {
-//   gsap.to(el, {
-//     y: function() {return (1 - parseFloat(el.getAttribute("data-speed"))) * (ScrollTrigger.maxScroll(window) - (this.scrollTrigger ? this.scrollTrigger.start : 0))},
-//     ease: "none",
-//     scrollTrigger: {
-//       trigger: el,
-//       start: "top center",
-//       end: "max",
-//       invalidateOnRefresh: true,
-//       scrub: true
-//     }
-//   });
-// });
-
 const handleDigitsScroll = () => {
-  sections.map((section, index) => {
-    let currentSection = section;
-    let sectionHeight = currentSection.offsetHeight;
-
-      gsap.to(currentSection.querySelector('.image-2'), {
-        y: function () {
-          return (
-            (-1 * parseFloat(currentSection.querySelector('.image-2').getAttribute("data-speed"))) * (currentSection.offsetHeight)
-          );
-        },
-        scrollTrigger: parallaxConfig(currentSection),
-      });
-
-      gsap.to(currentSection.querySelector('.image-3'), {
-        y: function () {
-          return (
-            (-1 * parseFloat(currentSection.querySelector('.image-3').getAttribute("data-speed"))) * (currentSection.offsetHeight)
-          );
-        },
-        scrollTrigger: parallaxConfig(currentSection),
-      });      
-  
-    if (index === 0) {
-      gsap.to(".fourth-digit", {
-        yPercent: 0,
-        scrollTrigger: scrollTriggerConfig(currentSection),
-      });
-    }
-
-    if (index === 1)
-      gsap.to(".fourth-digit", {
-        yPercent: -100,
-        scrollTrigger: scrollTriggerConfig(currentSection),
-      });
-
-    if (index === 2) {
-      gsap.fromTo(
-        ".fourth-digit",
-        {
-          yPercent: -100,
-        },
-        {
-          yPercent: -200,
-          scrollTrigger: scrollTriggerConfig(currentSection),
-        }
-      );
-    }
+  sections.forEach((currentSection) => {
+    const { offsetHeight: sectionHeight } = currentSection;
+    const imageElements = currentSection.querySelectorAll(".image");
+    const speed = Array.from(imageElements).map(
+      (image) => -1 * parseFloat(image.getAttribute("data-speed"))
+    );
+    gsap.to(imageElements, {
+      y: (i) => speed[i] * sectionHeight,
+      scrollTrigger: parallaxConfig(currentSection),
+    });
+  });
+  sections.forEach((currentSection, i) => {
+    const yPercentValues = [0, -100, -200];
+    const yPercent = yPercentValues[i];
+    gsap.to(".fourth-digit", {
+      yPercent,
+      scrollTrigger: scrollTriggerConfig(currentSection),
+    });
   });
 };
 
-// apply parallax effect to any element with a data-speed attribute
-// gsap.utils.toArray("[data-speed]").forEach((el) => {
-//   gsap.to(el, {
-//     y: function () {
-//       return (
-//         (1 - parseFloat(el.getAttribute("data-speed"))) *
-//         (ScrollTrigger.maxScroll(window) -
-//           (this.scrollTrigger ? this.scrollTrigger.start : 0))
-//       );
-//     },
-//     ease: "none",
-//     scrollTrigger: {
-//       trigger: el,
-//       start: "top center",
-//       end: "max",
-//       invalidateOnRefresh: true,
-//       scrub: true,
-//     },
-//   });
-// });
-
-const init = () => {
+const initializeComponent = () => {
   pushDigitsForEachSection();
   updateUniqueDigits();
   handleDigitsScroll();
 };
 
-init();
+initializeComponent();
