@@ -89,12 +89,34 @@ const handleDigitsScroll = () => {
     });
   });
   sections.forEach((currentSection, i) => {
-    const yPercentValues = [0, -100, -200];
-    const yPercent = yPercentValues[i];
-    gsap.to(".fourth-digit", {
-      yPercent,
-      scrollTrigger: scrollTriggerConfig(currentSection),
-    });
+    switch (i) {
+      case 0:
+        gsap.to(".fourth-digit", {
+          yPercent: 0,
+          scrollTrigger: scrollTriggerConfig(currentSection),
+        });
+        break;
+      case 1:
+        gsap.to(".fourth-digit", {
+          yPercent: -100,
+          scrollTrigger: scrollTriggerConfig(currentSection),
+        });
+        break;
+      case 2:
+        gsap.fromTo(
+          ".fourth-digit",
+          {
+            yPercent: -100,
+          },
+          {
+            yPercent: -200,
+            scrollTrigger: scrollTriggerConfig(currentSection),
+          }
+        );
+        break;
+      default:
+        break;
+    }
   });
 };
 
