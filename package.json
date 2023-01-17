@@ -1,5 +1,5 @@
 {
-    "name": "InfiniteLoopMarquee",
+    "name": "Timeline",
     "version": "1.0.0",
     "description": "",
     "scripts": {
@@ -10,7 +10,7 @@
     },
     "repository": {
       "type": "git",
-      "url": "git@github.com:farco-studio/interactions-infinite-loop-marquee.git"
+      "url": "git@github.com:farco-studio/interactions-timeline.git"
     },
     "keywords": [],
     "author": "Marina Gallardo",
