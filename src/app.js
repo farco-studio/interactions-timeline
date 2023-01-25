@@ -3,7 +3,11 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+let mm = gsap.matchMedia();
+
 const sections = gsap.utils.toArray(".section");
+const desktop = window.matchMedia("(min-width: 1024px)");
+
 const digitsContainers = [
   {
     container: document.querySelector(".first-digit"),
@@ -77,46 +81,48 @@ const parallaxConfig = (currentSection) => {
 };
 
 const handleDigitsScroll = () => {
-  sections.forEach((currentSection) => {
-    const { offsetHeight: sectionHeight } = currentSection;
-    const imageElements = currentSection.querySelectorAll(".image");
-    const speed = Array.from(imageElements).map(
-      (image) => -1 * parseFloat(image.getAttribute("data-speed"))
-    );
-    gsap.to(imageElements, {
-      y: (i) => speed[i] * sectionHeight,
-      scrollTrigger: parallaxConfig(currentSection),
+  mm.add(desktop, () => {
+    sections.forEach((currentSection) => {
+      const { offsetHeight: sectionHeight } = currentSection;
+      const imageElements = currentSection.querySelectorAll(".image");
+      const speed = Array.from(imageElements).map(
+        (image) => -1 * parseFloat(image.getAttribute("data-speed"))
+      );
+      gsap.to(imageElements, {
+        y: (i) => speed[i] * sectionHeight,
+        scrollTrigger: parallaxConfig(currentSection),
+      });
     });
-  });
-  sections.forEach((currentSection, i) => {
-    switch (i) {
-      case 0:
-        gsap.to(".fourth-digit", {
-          yPercent: 0,
-          scrollTrigger: scrollTriggerConfig(currentSection),
-        });
-        break;
-      case 1:
-        gsap.to(".fourth-digit", {
-          yPercent: -100,
-          scrollTrigger: scrollTriggerConfig(currentSection),
-        });
-        break;
-      case 2:
-        gsap.fromTo(
-          ".fourth-digit",
-          {
-            yPercent: -100,
-          },
-          {
-            yPercent: -200,
+    sections.forEach((currentSection, i) => {
+      switch (i) {
+        case 0:
+          gsap.to(".fourth-digit", {
+            yPercent: 0,
             scrollTrigger: scrollTriggerConfig(currentSection),
-          }
-        );
-        break;
-      default:
-        break;
-    }
+          });
+          break;
+        case 1:
+          gsap.to(".fourth-digit", {
+            yPercent: -100,
+            scrollTrigger: scrollTriggerConfig(currentSection),
+          });
+          break;
+        case 2:
+          gsap.fromTo(
+            ".fourth-digit",
+            {
+              yPercent: -100,
+            },
+            {
+              yPercent: -200,
+              scrollTrigger: scrollTriggerConfig(currentSection),
+            }
+          );
+          break;
+        default:
+          break;
+      }
+    });
   });
 };
 
