@@ -5,7 +5,6 @@ gsap.registerPlugin(ScrollTrigger);
 
 let mm = gsap.matchMedia();
 
-// const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
 const sections = gsap.utils.toArray(".section");
 
 const digitsContainers = [
