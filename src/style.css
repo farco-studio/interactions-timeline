@@ -9,6 +9,7 @@ h3 {
 }
 
 :root {
+  --color-primary: #000;
   --main-color: #032a9e;
   --bg-color: #ccdefa;
   --digit--size: 240px;
@@ -22,10 +23,59 @@ h3 {
   --bodycopy--line-height: 32px;
   --display-font: "Prata", sans-serif;
   --body-font: "Montserrat", sans-serif;
+  --header-font: "Inter", sans-serif;
+  --header-font-size: 16px;
+}
+
+@media screen and (max-width: 767px) {
+  :root {
+    --header-font-size: 14px;
+  }
 }
 
 body {
   background-color: var(--bg-color);
+}
+
+.header {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  right: 24px;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-primary);
+  position: relative;
+  font-family: var(--header-font);
+  font-size: var(--header-font-size);
+}
+
+.header a::after {
+  content: '';
+  display: inline-block;
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  right: 100%;
+  background: var(--color-primary);
+  position: absolute;
+  transition: right 0.3s ease-in-out;
+}
+
+.header a:hover::after {
+  right: 24px;
+}
+
+.header svg path {
+  stroke: var(--color-primary);
 }
 
 .intro {
@@ -43,7 +93,7 @@ h2 {
   line-height: var(--bg-color);
   font-family: var(--display-font);
   margin: 0;
-  padding-top: 60px;
+  padding-top: 80px;
 }
 
 .year {
@@ -81,7 +131,6 @@ h3 {
   overflow: hidden;
   font-size: var(--digit--size);
   height: 300px;
-  /* height: var(--digit--size); */
   right: 0;
   font-family: var(--display-font);
 }
@@ -210,8 +259,8 @@ h3 {
     grid-row: 4 / 4;
   }
 
-  .image-2 img {
-    margin-top: 60px;
+  .image-3 img {
+    margin-top: -60px;
   }
 
   .image-3 {
@@ -223,6 +272,10 @@ h3 {
     grid-column: 1 / -1;
     grid-row: 2 / 2;
     margin-bottom: 40px;
+  }
+
+  .timeline {
+    padding-bottom: 120px;
   }
 }
 

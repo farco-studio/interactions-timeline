@@ -5,8 +5,8 @@ gsap.registerPlugin(ScrollTrigger);
 
 let mm = gsap.matchMedia();
 
+// const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
 const sections = gsap.utils.toArray(".section");
-const desktop = window.matchMedia("(min-width: 1024px)");
 
 const digitsContainers = [
   {
@@ -62,7 +62,7 @@ const updateUniqueDigits = () => {
   );
 };
 
-const scrollTriggerConfig = (currentSection) => {
+const digitsConfig = (currentSection) => {
   return {
     trigger: currentSection,
     start: "top bottom",
@@ -80,56 +80,87 @@ const parallaxConfig = (currentSection) => {
   };
 };
 
-const handleDigitsScroll = () => {
-  mm.add(desktop, () => {
-    sections.forEach((currentSection) => {
-      const { offsetHeight: sectionHeight } = currentSection;
-      const imageElements = currentSection.querySelectorAll(".image");
-      const speed = Array.from(imageElements).map(
-        (image) => -1 * parseFloat(image.getAttribute("data-speed"))
-      );
-      gsap.to(imageElements, {
-        y: (i) => speed[i] * sectionHeight,
-        scrollTrigger: parallaxConfig(currentSection),
+const parallaxMobileConfig = (currentSection) => {
+  return {
+    trigger: currentSection,
+    start: "80% 100%",
+    end: "bottom 10%",
+    scrub: true,
+  };
+};
+
+const handleScroll = () => {
+  mm.add(
+    {
+      isDesktop: "(min-width: 1024px)",
+      isMobile: "(max-width: 1023px)",
+    },
+    (context) => {
+      let { isDesktop } = context.conditions;
+
+      sections.forEach((currentSection) => {
+        const { offsetHeight: sectionHeight } = currentSection;
+        const imageElements = currentSection.querySelectorAll(".image");
+        const speed = Array.from(imageElements).map(
+          (image) => -1 * parseFloat(image.getAttribute("data-speed"))
+        );
+        gsap.fromTo(
+          imageElements,
+          {
+            opacity: isDesktop ? 1 : 0,
+            y: (i) => (isDesktop ? 0 : -(speed[i] * sectionHeight / 2)),
+          },
+          {
+            y: (i) => (isDesktop ? speed[i] * sectionHeight : 0),
+            opacity: 1,
+            scrollTrigger: isDesktop ? parallaxConfig(currentSection) : parallaxMobileConfig(currentSection),
+          }
+        );
       });
-    });
-    sections.forEach((currentSection, i) => {
-      switch (i) {
-        case 0:
-          gsap.to(".fourth-digit", {
-            yPercent: 0,
-            scrollTrigger: scrollTriggerConfig(currentSection),
-          });
-          break;
-        case 1:
-          gsap.to(".fourth-digit", {
-            yPercent: -100,
-            scrollTrigger: scrollTriggerConfig(currentSection),
-          });
-          break;
-        case 2:
-          gsap.fromTo(
-            ".fourth-digit",
-            {
-              yPercent: -100,
-            },
-            {
-              yPercent: -200,
-              scrollTrigger: scrollTriggerConfig(currentSection),
-            }
-          );
-          break;
-        default:
-          break;
+      if (isDesktop) {
+        sections.forEach((currentSection, i) => {
+          switch (i) {
+            case 0:
+              gsap.to(".fourth-digit", {
+                yPercent: 0,
+                scrollTrigger: digitsConfig(currentSection),
+              });
+              break;
+            case 1:
+              gsap.to(".fourth-digit", {
+                yPercent: -100,
+                scrollTrigger: digitsConfig(currentSection),
+              });
+              break;
+            case 2:
+              gsap.fromTo(
+                ".fourth-digit",
+                {
+                  yPercent: -100,
+                },
+                {
+                  yPercent: -200,
+                  scrollTrigger: digitsConfig(currentSection),
+                }
+              );
+              break;
+            default:
+              break;
+          }
+        });
       }
-    });
-  });
+    }
+  );
 };
 
 const initializeComponent = () => {
   pushDigitsForEachSection();
   updateUniqueDigits();
-  handleDigitsScroll();
+  handleScroll();
 };
 
 initializeComponent();
+
+window.addEventListener("resize", () => {
+  gsap.matchMediaRefresh();
+});
