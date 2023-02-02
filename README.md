@@ -1,9 +1,5 @@
 # Timeline Scroll with Parallax
 
-
-https://user-images.githubusercontent.com/854320/216283828-35cf46d2-9081-415e-b1ad-ecb08de1fa23.mp4
-
-
 Free, refined interactions to inspire our community and make the web a more beautiful place.
 
 [Demo](https://farco-interactions-infinite-loop-marquee.onrender.com/)
