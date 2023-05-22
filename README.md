@@ -2,7 +2,7 @@
 
 Free, refined interactions to inspire our community and make the web a more beautiful place.
 
-[Demo]([https://farco-interactions-infinite-loop-marquee.onrender.com/](https://farco-interactions-timeline.onrender.com/))
+[Demo](https://farco-interactions-timeline.onrender.com/)
 
 
 ## Installation
