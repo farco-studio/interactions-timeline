@@ -4,7 +4,7 @@
 
 Free, refined interactions to inspire our community and make the web a more beautiful place.
 
-[Demo](https://farco-interactions-timeline.onrender.com/)
+[Demo](https://interactions-timeline.onrender.com)
 
 
 ## Installation
